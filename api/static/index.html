@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fake News Detector</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1c2230; --muted:#667085; --line:#d9dde4;
+          --real:#1a7f4b; --fake:#c0392b; --accent:#2f5bea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12151c; --card:#1b1f29; --text:#e8eaf0; --muted:#98a2b3; --line:#2d3340;
+            --real:#4cc38a; --fake:#ff7a6b; --accent:#6f8cff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:16px/1.5 system-ui, "Segoe UI", sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:32px 20px 48px; }
+  h1 { margin:0 0 4px; font-size:1.6rem; }
+  .sub { color:var(--muted); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  textarea { width:100%; min-height:200px; resize:vertical; padding:12px; border-radius:8px;
+             border:1px solid var(--line); background:transparent; color:inherit; font:inherit; }
+  textarea:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .row { display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:10px 20px;
+           font:inherit; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:wait; }
+  .ghost { background:transparent; color:var(--muted); border:1px solid var(--line); }
+  #count { color:var(--muted); font-size:.9rem; margin-left:auto; }
+  #result { margin-top:20px; display:none; }
+  .verdict { font-size:1.4rem; font-weight:600; }
+  .real { color:var(--real); } .fake { color:var(--fake); } .uncertain { color: var(--muted); }
+  .bar { height:12px; border-radius:6px; background:var(--real); overflow:hidden; margin:10px 0 4px; }
+  .bar > div { height:100%; background:var(--fake); width:0; transition:width .4s; }
+  .scale { display:flex; justify-content:space-between; color:var(--muted); font-size:.85rem; }
+  .warn { margin-top:12px; padding:10px 12px; border-radius:8px; border:1px solid var(--fake);
+          color:var(--fake); display:none; }
+  .err { color:var(--fake); margin-top:12px; display:none; }
+  .note { color:var(--muted); font-size:.85rem; margin-top:20px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Fake News Detector</h1>
+  <p class="sub">Paste a news article to see whether it resembles real or fake news in the training data.</p>
+
+  <div class="card">
+    <textarea id="text" placeholder="Paste the article text here (at least 30 characters)..."></textarea>
+    <div class="row">
+      <button id="go">Analyze</button>
+      <button id="clear" class="ghost">Clear</button>
+      <span id="count">0 characters</span>
+    </div>
+    <div class="err" id="err"></div>
+
+    <div id="result">
+      <div class="verdict" id="verdict"></div>
+      <div class="bar"><div id="fill"></div></div>
+      <div class="scale"><span>Real</span><span id="prob"></span><span>Fake</span></div>
+      <div class="warn" id="warn"></div>
+    </div>
+  </div>
+
+  <p class="note">
+    The model was trained on the WELFake dataset (mostly 2016-2018 US political news). It recognises
+    patterns of that dataset's real and fake sources and does not check facts. Do not use it to decide
+    what is true.
+  </p>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const text = $("text"), go = $("go");
+
+text.addEventListener("input", () => { $("count").textContent = text.value.length + " characters"; });
+$("clear").addEventListener("click", () => {
+  text.value = ""; $("count").textContent = "0 characters";
+  $("result").style.display = "none"; $("err").style.display = "none";
+});
+
+go.addEventListener("click", async () => {
+  $("err").style.display = "none";
+  $("result").style.display = "none";
+  if (text.value.trim().length < 30) {
+    $("err").textContent = "Please paste at least 30 characters.";
+    $("err").style.display = "block";
+    return;
+  }
+  go.disabled = true; go.textContent = "Analyzing...";
+  try {
+    const r = await fetch("/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text.value }),
+    });
+    if (!r.ok) throw new Error("Server returned " + r.status);
+    const d = await r.json();
+
+    const v = $("verdict");
+    const names = { fake: "Looks like FAKE news", real: "Looks like REAL news", uncertain: "Uncertain: not enough evidence" };
+    v.textContent = names[d.label];
+    v.className = "verdict " + d.label;
+    $("fill").style.width = (d.fake_probability * 100).toFixed(1) + "%";
+    $("prob").textContent = (d.fake_probability * 100).toFixed(1) + "% fake";
+    const w = $("warn");
+    if (d.warning) { w.textContent = d.warning; w.style.display = "block"; }
+    else { w.style.display = "none"; }
+    $("result").style.display = "block";
+  } catch (e) {
+    $("err").textContent = "Could not get a prediction: " + e.message;
+    $("err").style.display = "block";
+  } finally {
+    go.disabled = false; go.textContent = "Analyze";
+  }
+});
+</script>
+</body>
+</html>

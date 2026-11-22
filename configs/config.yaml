@@ -1,0 +1,29 @@
+paths:
+  raw_data: data/raw/WELFake_Dataset.csv
+  clean_data: data/processed/welfake_clean.csv
+  models_dir: models
+  reports_dir: reports
+
+data:
+  text_col: text
+  title_col: title
+  label_col: label
+  use_title: false      # your notebook used text only; flip to true to use title + text
+  test_size: 0.33       # same as your notebook
+  random_state: 0
+
+  labels:
+  real: 0
+  fake: 1
+
+preprocess:
+  strip_source_tags: true   # set false later for the leakage comparison
+  min_token_len: 3
+  stem: true
+  strip_dates: true
+
+features:
+  max_features: 6000
+  ngram_range: [1, 2]
+  min_df: 5
+  max_df: 0.9

@@ -1,0 +1,6 @@
+pyproject.toml
+src/fakenews/__init__.py
+src/fakenews.egg-info/PKG-INFO
+src/fakenews.egg-info/SOURCES.txt
+src/fakenews.egg-info/dependency_links.txt
+src/fakenews.egg-info/top_level.txt

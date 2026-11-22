@@ -1,0 +1,28 @@
+{
+  "raw": {
+    "rows": 72134,
+    "columns": [
+      "title",
+      "text",
+      "label"
+    ],
+    "nulls": {
+      "title": 558,
+      "text": 39,
+      "label": 0
+    },
+    "duplicate_rows": 8456,
+    "duplicate_texts": 9377,
+    "label_counts": {
+      "1": 37106,
+      "0": 35028
+    }
+  },
+  "clean": {
+    "rows": 62704,
+    "label_counts": {
+      "0": 34619,
+      "1": 28085
+    }
+  }
+}
