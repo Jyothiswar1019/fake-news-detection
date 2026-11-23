@@ -29,14 +29,13 @@
   #count { color:var(--muted); font-size:.9rem; margin-left:auto; }
   #result { margin-top:20px; display:none; }
   .verdict { font-size:1.4rem; font-weight:600; }
-  .real { color:var(--real); } .fake { color:var(--fake); } .uncertain { color: var(--muted); }
-  .bar { height:12px; border-radius:6px; background:var(--real); overflow:hidden; margin:10px 0 4px; }
-  .bar > div { height:100%; background:var(--fake); width:0; transition:width .4s; }
+  .real { color:var(--real); } .fake { color:var(--fake); } .uncertain { color:var(--muted); }
+  .bar { display:flex; height:12px; border-radius:6px; background:var(--real); overflow:hidden; margin:10px 0 4px; }
+  .bar > div { height:100%; background:var(--fake); width:0; margin-left:auto; transition:width .4s; }
   .scale { display:flex; justify-content:space-between; color:var(--muted); font-size:.85rem; }
   .warn { margin-top:12px; padding:10px 12px; border-radius:8px; border:1px solid var(--fake);
           color:var(--fake); display:none; }
   .err { color:var(--fake); margin-top:12px; display:none; }
-  .note { color:var(--muted); font-size:.85rem; margin-top:20px; }
 </style>
 </head>
 <body>
@@ -60,12 +59,6 @@
       <div class="warn" id="warn"></div>
     </div>
   </div>
-
-  <p class="note">
-    The model was trained on the WELFake dataset (mostly 2016-2018 US political news). It recognises
-    patterns of that dataset's real and fake sources and does not check facts. Do not use it to decide
-    what is true.
-  </p>
 </main>
 
 <script>
@@ -98,7 +91,7 @@ go.addEventListener("click", async () => {
 
     const v = $("verdict");
     const names = { fake: "Looks like FAKE news", real: "Looks like REAL news", uncertain: "Uncertain: not enough evidence" };
-    v.textContent = names[d.label];
+    v.textContent = names[d.label] || d.label;
     v.className = "verdict " + d.label;
     $("fill").style.width = (d.fake_probability * 100).toFixed(1) + "%";
     $("prob").textContent = (d.fake_probability * 100).toFixed(1) + "% fake";
