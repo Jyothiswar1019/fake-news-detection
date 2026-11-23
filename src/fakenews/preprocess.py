@@ -14,22 +14,6 @@ _STOP: set[str] | None = None
 _DATELINE = re.compile(r"^[^\n]{0,80}?\(reuters\)\s*[-–—]*\s*", re.IGNORECASE)
 _SOURCE_PATTERNS = [
     re.compile(r"\breuters\b", re.IGNORECASE),
-    re.compile(r"featured image( via)?", re.IGNORECASE),
-    re.compile(r"pic\.?\s*twitter\.?\s*com/\S+", re.IGNORECASE),   # intact embeds
-    re.compile(r"pic\W{0,3}twitter\W{0,3}(com\b)?", re.IGNORECASE),  # embeds with the URL stripped
-    re.compile(r"twitter\.com/\S+", re.IGNORECASE),
-    re.compile(r"\b(photo|image|images|screenshot)\s+(by|via|credit|courtesy)\b", re.IGNORECASE),
-    re.compile(r"\bgetty\s+images?\b", re.IGNORECASE),
-    re.compile(r"\bdaily (mail|caller)\b", re.IGNORECASE),
-    re.compile(r"21st century wire", re.IGNORECASE),
-    re.compile(r"\bshare this\b", re.IGNORECASE),
-    re.compile(r"\b(read more|watch the video|watch below|watch:)\b", re.IGNORECASE),
-    re.compile(r"\bplease (consider )?donat\w*", re.IGNORECASE),
-]
-
-# Outlet / platform / boilerplate tokens (applied to lowercase tokens before stemming)
-_SOURCE_PATTERNS = [
-    re.compile(r"\breuters\b", re.IGNORECASE),
     re.compile(r"featured\s+image(\s+via)?", re.IGNORECASE),
     re.compile(r"pic\.?\s*twitter\.?\s*com/\S+", re.IGNORECASE),
     re.compile(r"pic\W{0,3}twitter\W{0,3}(com\b)?", re.IGNORECASE),
@@ -47,6 +31,11 @@ _SOURCE_PATTERNS = [
     re.compile(r"\bscreen\s*(capture|grab|shot)s?\b", re.IGNORECASE),
     re.compile(r"\bplease\s+(consider\s+)?(donat|like|share|subscribe|follow|support|click|visit)\w*", re.IGNORECASE),
     re.compile(r"\bwith\s+permission\b", re.IGNORECASE),
+    # IFND fact-checker boilerplate
+    re.compile(r"\bfact[\s-]*check(?:ed|s|ing)?\b", re.IGNORECASE),
+    re.compile(r"\bhere.{0,3}s the truth(?: behind (?:this|it))?", re.IGNORECASE),
+    re.compile(r"\bdon.{0,3}t fall for (?:this|it)\b", re.IGNORECASE),
+    re.compile(r"\bno,? this is not\b", re.IGNORECASE),
 ]
 
 # Outlet / platform / boilerplate tokens (applied to lowercase tokens before stemming)
@@ -58,6 +47,7 @@ _BLOCKLIST = {
     "youtube", "gateway", "wire", "loading",
 }
 
+# Weekday / month words: a source-style signal (e.g. wire-service "said on Friday")
 _DATE_WORDS = {
     "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
     "january", "february", "march", "april", "may", "june", "july", "august",

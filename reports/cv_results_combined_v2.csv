@@ -1,0 +1,6 @@
+param_C,param_class_weight,mean_train_score,mean_test_score,std_test_score
+0.003,balanced,0.8848,0.8642,0.001
+0.01,balanced,0.9088,0.8756,0.0011
+0.03,balanced,0.9276,0.8795,0.0017
+0.1,balanced,0.9455,0.8799,0.0032
+0.3,balanced,0.9587,0.8781,0.0034

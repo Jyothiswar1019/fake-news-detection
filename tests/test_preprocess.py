@@ -44,3 +44,8 @@ def test_round_three_boilerplate_removed():
     for bad in ("member", "wire", "screen", "youtub", "gateway", "load", "permiss", "weekday"):
         assert bad not in out
     assert "senat" in out and "vote" in out
+def test_factcheck_boilerplate_removed():
+    out = clean_text("Fact Check: Here’s the truth behind this video. Don’t fall for this morphed image")
+    for bad in ("fact", "truth", "fall"):
+        assert bad not in out
+    assert "video" in out and "morph" in out

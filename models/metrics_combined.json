@@ -1,0 +1,31 @@
+{
+  "model": "LogisticRegression",
+  "variant": "combined",
+  "best_params": {
+    "C": 0.01,
+    "class_weight": "balanced"
+  },
+  "cv_f1_macro": 0.8657417457852609,
+  "test_overall": {
+    "accuracy": 0.8861184792219275,
+    "balanced_acc": 0.8616762461611633,
+    "precision": 0.8740225061987412,
+    "recall": 0.7827980867782712,
+    "f1": 0.8258988915923222,
+    "roc_auc": 0.9296086668160839
+  },
+  "mixed_sites": [
+    "INDIATODAY",
+    "NEWSMETER",
+    "NEWSMOBILE",
+    "TEEKHIMIRCHI",
+    "THEPRINT"
+  ],
+  "label_map": {
+    "0": "real",
+    "1": "fake"
+  },
+  "train_rows": 67840,
+  "test_rows": 33930,
+  "sklearn_version": "1.7.2"
+}
